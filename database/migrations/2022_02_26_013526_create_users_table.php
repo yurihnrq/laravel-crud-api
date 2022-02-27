@@ -13,17 +13,15 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('users_table', function (Blueprint $table) {
+        Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name', 100);
-            $table->integer('cpf');
-            $table->integer('phone');
-            $table->string('email', 100);
+            $table->string('cpf', 11)->unique();
+            $table->string('phone', 11);
+            $table->string('email', 100)->unique();
             $table->string('address', 150);
             $table->text('note');
             $table->timestamps();
-
-            // protected $fillable = ['name', 'cpf', 'phone', 'email', 'address', 'note'];
         });
     }
 

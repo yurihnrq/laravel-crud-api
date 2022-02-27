@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('user', 'App\Http\Controllers\UserController@getAllUsers');
 Route::get('user/{id}', 'App\Http\Controllers\UserController@getUser');
+Route::get('user/info/{info}', 'App\Http\Controllers\UserController@getUsersByInfo');
 Route::post('user', 'App\Http\Controllers\UserController@createUser');
 Route::put('user/{id}', 'App\Http\Controllers\UserController@updateUser');
 Route::delete('user/{id}', 'App\Http\Controllers\UserController@deleteUser');
