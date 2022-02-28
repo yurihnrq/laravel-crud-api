@@ -4,10 +4,36 @@ namespace App\Http\Controllers;
 
 use PDO;
 use Illuminate\Http\Request;
-use App\Models\User;
 use Exception;
 
 class UserController extends Controller {
+    private static function verifyCPF($cpfToVerify) {
+        // Extrai somente os números
+        $cpf = preg_replace('/[^0-9]/is', '', $cpfToVerify);
+
+        // Verifica se foi informado todos os dígitos corretamente.
+        if (strlen($cpf) != 11) {
+            return false;
+        }
+
+        // Verifica se foi informada uma sequência de dígitos repetidos. Ex: 111.111.111-11.
+        if (preg_match('/(\d)\1{10}/', $cpf)) {
+            return false;
+        }
+
+        // Faz o calculo para validar o CPF.
+        for ($t = 9; $t < 11; $t++) {
+            for ($d = 0, $c = 0; $c < $t; $c++) {
+                $d += $cpf[$c] * (($t + 1) - $c);
+            }
+            $d = ((10 * $d) % 11) % 10;
+            if ($cpf[$c] != $d) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private static function PDOConnection() {
         // 
         $DB_CONNECTION = env('DB_CONNECTION');
@@ -60,7 +86,7 @@ class UserController extends Controller {
             $pdo = $this->PDOConnection();
             $sql = <<<SQL
                 SELECT * FROM users WHERE upper(users.name) LIKE ? or upper(users.email) LIKE ?
-                ORDER BY users.id ASC
+                ORDER BY users.id ASC LIMIT 10
             SQL;
             $stmt = $pdo->prepare($sql);
             $stmt->execute(['%' . strtoupper($info) . '%', '%' . strtoupper($info) . '%']);
@@ -84,6 +110,12 @@ class UserController extends Controller {
             $stmt = $pdo->prepare($sql);
             $stmt->execute([$id]);
 
+            if ($stmt->rowCount() < 1) {
+                return response()->json([
+                    'message' => 'user not found'
+                ], 404);
+            }
+
             $users = json_encode($stmt->fetchAll());
         } catch (Exception $e) {
             return response()->json([
@@ -96,15 +128,14 @@ class UserController extends Controller {
 
     public function createUser(Request $request) {
         try {
-            $user = new User;
-            $user->name = $request->name;
-            $user->cpf = preg_replace('/[^0-9]/is', '', $request->cpf);
-            $user->phone = $request->phone;
-            $user->email = $request->email;
-            $user->address = $request->address;
-            $user->note = $request->note;
+            $userName = $request->name;
+            $userCPF = preg_replace('/[^0-9]/is', '', $request->cpf);
+            $userPhone = $request->phone;
+            $userEmail = $request->email;
+            $userAddress = $request->address;
+            $userNote = $request->note;
 
-            if (!$user->verifyCPF() || strlen($user->note) > 300) {
+            if (!$this->verifyCPF($userCPF) || strlen($userNote) > 300) {
                 return response()->json([
                     'message' => 'invalid user credentials'
                 ], 400);
@@ -126,12 +157,12 @@ class UserController extends Controller {
             SQL;
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
-                $user->name,
-                $user->cpf,
-                $user->phone,
-                $user->email,
-                $user->address,
-                $user->note,
+                $userName,
+                $userCPF,
+                $userPhone,
+                $userEmail,
+                $userAddress,
+                $userNote,
                 date('Y-m-d H:i:s'),
                 date('Y-m-d H:i:s')
             ]);
@@ -160,15 +191,14 @@ class UserController extends Controller {
                 ], 404);
             }
 
-            $user = new User;
-            $user->name = $request->name;
-            $user->cpf = preg_replace('/[^0-9]/is', '', $request->cpf);
-            $user->phone = $request->phone;
-            $user->email = $request->email;
-            $user->address = $request->address;
-            $user->note = $request->note;
+            $userName = $request->name;
+            $userCPF = preg_replace('/[^0-9]/is', '', $request->cpf);
+            $userPhone = $request->phone;
+            $userEmail = $request->email;
+            $userAddress = $request->address;
+            $userNote = $request->note;
 
-            if (!$user->verifyCPF() || strlen($user->note) > 300) {
+            if (!$this->verifyCPF($userCPF) || strlen($userNote) > 300) {
                 return response()->json([
                     'message' => 'invalid user credentials'
                 ], 400);
@@ -188,12 +218,12 @@ class UserController extends Controller {
 
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
-                $user->name,
-                $user->cpf,
-                $user->phone,
-                $user->email,
-                $user->address,
-                $user->note,
+                $userName,
+                $userCPF,
+                $userPhone,
+                $userEmail,
+                $userAddress,
+                $userNote,
                 date('Y-m-d H:i:s'),
                 $id
             ]);
