@@ -29,10 +29,11 @@ composer install;
 
 5) Baixe e instale o PostgreSQL. Para realizar o download, [clique aqui](https://www.postgresql.org/download/).
 
-6) Importe o banco de dados utilizando o arquivo db.sql que está na raiz deste projeto com o seguinte comando:
+6) Crie o banco de dados e importe a tabela utilizando o arquivo db.sql que está na raiz deste projeto com o seguinte comando:
 
 ```bash
-psql -U <seu_usuário_postgres> -d php_crud < <caminho_para_db.sql>
+psql -U <seu_usuário_postgres> -c 'CREATE DATABASE php_crud';
+psql -U <seu_usuário_postgres> -d php_crud < <caminho_para_db.sql>;
 ```
 
 7) Crie um arquivo .env na raiz do projeto, copie para ele o conteúdo do arquivo .env.example preencha modifique as variáveis que iniciam com DB como a seguir:
