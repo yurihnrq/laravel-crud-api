@@ -18,7 +18,7 @@ Para instalar e executar este projeto em sua máquina local, execute os seguinte
 3) Faça download deste repositório ou clone-o com Git (caso não o tenha instalado, ele pode ser baixado no [site oficial](https://git-scm.com/)):
 
 ```bash
-git clone https://github.com/yurihnrq/react-user-crud.git;
+git clone https://github.com/yurihnrq/laravel-crud-api.git;
 ```
 
 4) Entre na pasta do repositório com o seu terminal e execute o comando:
