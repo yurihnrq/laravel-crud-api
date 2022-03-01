@@ -14,6 +14,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Aqui defino os endpoints da API e o método suportado utilizando
+// as funções estáticas da classe Route.
+// Além do endpoint, informo a função que será executada quando 
+// uma requisição acontecer.
 Route::get('user', 'App\Http\Controllers\UserController@getAllUsers');
 Route::get('user/{id}', 'App\Http\Controllers\UserController@getUser');
 Route::get('user/info/{info}', 'App\Http\Controllers\UserController@getUsersByInfo');

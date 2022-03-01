@@ -12,14 +12,12 @@ class UserController extends Controller {
         $cpf = preg_replace('/[^0-9]/is', '', $cpfToVerify);
 
         // Verifica se foi informado todos os dígitos corretamente.
-        if (strlen($cpf) != 11) {
+        if (strlen($cpf) != 11)
             return false;
-        }
 
         // Verifica se foi informada uma sequência de dígitos repetidos. Ex: 111.111.111-11.
-        if (preg_match('/(\d)\1{10}/', $cpf)) {
+        if (preg_match('/(\d)\1{10}/', $cpf))
             return false;
-        }
 
         // Faz o calculo para validar o CPF.
         for ($t = 9; $t < 11; $t++) {
@@ -31,11 +29,13 @@ class UserController extends Controller {
                 return false;
             }
         }
+
         return true;
     }
 
     private static function PDOConnection() {
-        // 
+        // Obtém as variáveis de ambiente no arquivo .env que estiver
+        // na raiz do projeto.
         $DB_CONNECTION = env('DB_CONNECTION');
         $DB_HOST = env('DB_HOST');
         $DB_PORT = env('DB_PORT');
@@ -65,12 +65,16 @@ class UserController extends Controller {
 
     public function getAllUsers() {
         try {
+            // Realizando conexão com o banco de dados.
             $pdo = $this->PDOConnection();
+            // Estruturando query.
             $sql = <<<SQL
                 SELECT * FROM users ORDER BY users.id ASC
             SQL;
+            // Realiza query.
             $stmt = $pdo->query($sql);
 
+            // Converte os dados obtidos para JSON.
             $users = json_encode($stmt->fetchAll());
         } catch (Exception $e) {
             return response()->json([
@@ -130,6 +134,7 @@ class UserController extends Controller {
         try {
             $userName = $request->name;
             $userCPF = preg_replace('/[^0-9]/is', '', $request->cpf);
+            $userBirth = $request->birth;
             $userPhone = $request->phone;
             $userEmail = $request->email;
             $userAddress = $request->address;
@@ -145,7 +150,8 @@ class UserController extends Controller {
             $sql = <<<SQL
                 INSERT INTO users (
                     name, 
-                    cpf, 
+                    cpf,
+                    birth, 
                     phone, 
                     email, 
                     address, 
@@ -153,12 +159,13 @@ class UserController extends Controller {
                     created_at, 
                     updated_at
                 )
-                VALUES (?,?,?,?,?,?,?,?)
+                VALUES (?,?,?,?,?,?,?,?,?)
             SQL;
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
                 $userName,
                 $userCPF,
+                $userBirth,
                 $userPhone,
                 $userEmail,
                 $userAddress,
@@ -193,6 +200,7 @@ class UserController extends Controller {
 
             $userName = $request->name;
             $userCPF = preg_replace('/[^0-9]/is', '', $request->cpf);
+            $userBirth = $request->birth;
             $userPhone = $request->phone;
             $userEmail = $request->email;
             $userAddress = $request->address;
@@ -208,6 +216,7 @@ class UserController extends Controller {
                 UPDATE users SET 
                     name=?, 
                     cpf=?, 
+                    birth=?, 
                     phone=?, 
                     email=?, 
                     address=?, 
@@ -220,6 +229,7 @@ class UserController extends Controller {
             $stmt->execute([
                 $userName,
                 $userCPF,
+                $userBirth,
                 $userPhone,
                 $userEmail,
                 $userAddress,
